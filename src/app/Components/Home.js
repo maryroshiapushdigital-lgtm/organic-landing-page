@@ -124,9 +124,14 @@ const CloseIcon = ({ size = 24, color = 'currentColor' }) => (
 function Home() {
     const [menuOpen, setMenuOpen] = React.useState(false);
     const [isScrolled, setIsScrolled] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
     const videoRef = useRef(null);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
     if (videoRef.current) {
       // Set speed to 0.5x for a slow-motion background effect
       videoRef.current.playbackRate = 1;
@@ -147,11 +152,23 @@ function Home() {
     window.addEventListener('scroll', handleScroll);
     handleScroll();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
     <div className={`oh-page ${menuOpen ? 'menu-is-open' : ''}`}>
+      {isLoading && (
+        <div className="oh-preloader">
+          <div className="oh-preloader-content">
+            <img src="/images/Logo.svg" alt="Organic Heritage Logo" className="oh-preloader-logo" />
+            <h2 className="oh-preloader-text">Organic Heritage</h2>
+            <div className="oh-preloader-spinner"></div>
+          </div>
+        </div>
+      )}
       {/* ---- Header ---- */}
       <header className={`oh-header ${isScrolled ? 'oh-header--scrolled' : ''}`}>
         <a href="#home" className="oh-header__logo" aria-label="Organic Heritage">
